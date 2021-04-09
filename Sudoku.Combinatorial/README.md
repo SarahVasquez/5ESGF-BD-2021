@@ -1,5 +1,7 @@
 # Projet C# Sudoku Solver
 
+Sarah Vasquez, Laureline Petit, Vada Zamble, Marie-Jo Kone
+
 ## Sujet 11 : Résolution de Sudoku par réseau de neurones convolués
 
 ### Collecte des données
