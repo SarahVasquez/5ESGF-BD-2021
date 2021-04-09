@@ -1,4 +1,4 @@
-export SPARK_HOME=/Users/sarahvasquez/Downloads/spark-3.1.1-bin-hadoop2.7
+export SPARK_HOME=/Users/sarahvasquez/Downloads/spark-2.4.1-bin-hadoop2.7 
 
 export PATH="$SPARK_HOME/bin:$PATH"
 
@@ -12,6 +12,8 @@ dotnet build
 
 export DOTNET_ASSEMBLY_SEARCH_PATHS=/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1
 
-SPARK_LOCAL_IP="/Users/sarahvasquez/Downloads/spark-2.4.1-bin-hadoop2.7"
-
-90
+spark-submit \
+--class org.apache.spark.deploy.dotnet.DotnetRunner \
+--master local \
+/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1/microsoft-spark-2-4_2.11-1.0.0.jar  \
+dotnet /Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1/SudokuCombinatorialEvolutionSolver.dll

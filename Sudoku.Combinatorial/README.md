@@ -6,6 +6,8 @@
 
 Nous avons trouvé les données sur Kaggle qui contiennent 1 million de jeux Sudoku non résolus et résolus sur deux colonnes. Chaque jeu représente une chaîne de 81  numéros.  Le nombre 0 représente la position vide dans les jeux non résolus.
 
+![screen1](screens/screen1.png)
+
 Notre tâche est de nourrir le sudoku non résolu grâce à un réseau neuronal pour obtenir le sudoku résolu en sortie. En d'autres termes, cela veut dire qu'en entrée on alimente le réseau de 81 numéros et en sortie, on obtient 81 numéros. Les chiffres de 1 à 9 prenant la place des 0.
  
 Pour cela, nous devons convertir les données d'entrées non résolues en un tableau 3D puis les normaliser car les réseaux de neurones fonctionnent généralement mieux avec des données normalisées centrées.
@@ -13,6 +15,8 @@ Pour cela, nous devons convertir les données d'entrées non résolues en un tab
 ### Conception de réseau
 
 Dans une classification multiclasse typique, le réseau neuronal produit des scores pour chaque classe. Ensuite, nous appliquons la fonction softmax sur les scores finaux pour les convertir en probabilités. Et les données sont classées dans une classe qui a la valeur de probabilité la plus élevée.
+
+![screen2](screens/screen2.png)
 
 Mais dans le sudoku, le scénario est différent. Nous devons obtenir 81 numéros pour chaque position dans le jeu sudoku, pas seulement un. Et nous avons un total de 9 classes pour chaque nombre parce qu’un nombre peut tomber dans une gamme de 1 à 9.
 Pour se conformer à cette conception, notre réseau doit avoir  les numéros de sortie où chaque ligne représente l’un des 81 numéros, et chaque colonne représente l’une des 9 classes. Ensuite, nous pouvons appliquer softmax et prendre le maximum avec chaque ligne afin que nous ayons 81 numéros classés dans l’une des 9 classes => 81 x 9
@@ -124,7 +128,7 @@ La méthode Solve est principalement un wrapper autour de la méthode SudokuSolv
 L'algorithme d'évolution combinatoire n'est pas garanti pour trouver une solution optimale (c'est-à-dire une solution sans erreur de contrainte), donc le programme de démonstration vérifie si la meilleure solution trouvée est optimale.
 
 
-### Initialisation et erreur de la matrice
+#### Initialisation et erreur de la matrice
 
 Ici il s’agit de trouver la bonne méthode pour parcourir chaque sous grille. Dans ce jeu on a des contraintes de lignes, de colonnes et de blocs. Il faut remplir toutes les cases avec les chiffres de 1 à 9, mais pas n'importe comment. Dans chaque colonne, dans chaque ligne et dans chaque bloc il doit y avoir tous les chiffres de 1 à 9 tout en évitant qu’il y ait des doublons. La contrainte la plus efficace à utiliser pour éviter les doublons est celle de sous-grille. L’approche adoptée consiste à définir deux méthodes d'aide, Block et Corner.                                                                                                                   Method Block accepte un index de ligne r et un index de colonne c, et renvoie un numéro de bloc (0-8) qui contient la cellule à (r, c). Les numéros de bloc sont attribués de gauche à droite, puis de haut en bas.
 
@@ -186,7 +190,7 @@ public static (int row, int column) Corner(int block)
 Ainsi, lorsque chacune des neuf sous grilles est remplie, il faudra déterminer les erreurs.L'erreur totale pour une solution possible est la somme du nombre de valeurs manquantes dans les lignes, plus le nombre de valeurs manquantes dans les colonnes.     En raison de l'invariant d'algorithme, toutes les sous-grilles 3x3 n'ont aucune valeur manquante, elles ne contribuent donc pas à l'erreur. Ainsi, il faudra déterminer les erreurs en comptant le nombre de valeurs en double.
 
 
-### Générer une matrice de voisinage
+#### Générer une matrice de voisinage
 
 Dans l’évolution combinatoire on a deux types d’objets organisme ceux qui utilisent la méthode matrice aléatoire et ceux qui utilisent une matrice voisine.
 
@@ -284,7 +288,7 @@ public static int[,] NeighborMatrix(Random rnd, int[,] problem, int[,] matrix)
 
 ```
 
-### Fusion de deux matrices
+#### Fusion de deux matrices
 
 L’algorithme d’optimisation de l’évolution combinatoire implémente une évolution en sélectionnant deux objets Organism (les champs contiennent une erreur). On va utiliser ces 2 objets pour créer un nouvel objet unique, qui ne contient aucune erreur. 
 On utilise la méthode MergeMatrices, qui accepte 2 matrices de dimensions 9x9. La méthode parcourt les blocs de 0 à 8, comme indique le code “ block < 9”. 
@@ -312,7 +316,7 @@ public static int[,] MergeMatrices(Random rnd, int[,] m1, int[,] m2)
 
 ```
 
-### La méthode SolveEvo
+#### La méthode SolveEvo
 
 La méthode SolveEvo (exécution de manière évolutive) est une combinaison de code et de pseudo-code (Déf : Le pseudo-code, appelé aussi Langage de Description d’Algorithmes, est une façon de décrire un algorithme en langage presque naturel, sans référence à un langage de programmation en particulier). La méthode commence par déterminer le nombre d'objets Organism comme 90% du nombre total utilisé. Cette valeur a été déterminée par les différents essais et erreurs et en trouvant les meilleures. Les objets Organism sont stockés dans un tableau nommé Hive. Nous voyons que la variable hive contient un nouvel organisme, qui va aussi chercher la meilleure erreur à son tour.
 Le code est le suivant : 
@@ -398,8 +402,172 @@ private Sudoku SolveInternal(Sudoku sudoku, int numOrganisms, int maxEpochs)
 Il y a une stratégie d’optimisation mise en place pour que l’algorithme ne garde que des solutions optimales. A chaque boucle d’itération, chaque organisme génère une solution aléatoire. Ce qui crée un Organism unique. Parfois, la méthode ne va pas garder la meilleure solution mais prendre une solution moins optimale pour pousser l’algorithme a chercher une solution encore plus optimale. 
 
 
+### Modifications apportées au programme
+
+#### Implémentation du fichier sudoku.csv
+
+Le fichier utilisé pour ce projet est à télécharger sur le lien suivant : https://www.kaggle.com/bryanpark/sudoku
+
+Pour implémenter le fichier nous avons créé la static string "sudokusolution" qui transforme les données input de type string du fichier csv en matrice int[,] afin que la solution puisse lire correctement les sudokus. Puis une fois le sudoku résolu, elle le retransforme en string pour affichage et en output.
 
 
-![logo](art/python_included_nuget.png)
+```c#
 
+static string sudokusolution(string grid)
+        {
+            
+
+            int[,] sudoku = new int[9, 9];
+            
+            for (int i = 0; i < 9; i++)
+            {
+                    
+                for (int index = 0; index < 9; index++)
+                {
+                    sudoku[i, index] = Convert.ToInt32(grid[index]);
+                }
+            }
+
+
+            Console.WriteLine("Begin solving Sudoku using combinatorial evolution");
+            Console.WriteLine("The Sudoku is:");
+            Console.WriteLine(sudoku.ToString());
+
+            const int numOrganisms = 200;
+            const int maxEpochs = 5000;
+            const int maxRestarts = 40;
+            Console.WriteLine($"Setting numOrganisms: {numOrganisms}");
+            Console.WriteLine($"Setting maxEpochs: {maxEpochs}");
+            Console.WriteLine($"Setting maxRestarts: {maxRestarts}");
+
+            var solver = new SudokuSolver();
+            var solvedSudoku = solver.Solve(sudoku, numOrganisms, maxEpochs, maxRestarts);
+
+            Console.WriteLine("Best solution found:");
+            Console.WriteLine(solvedSudoku.ToString());
+            Console.WriteLine(solvedSudoku.Error == 0 ? "Success" : "Did not find optimal solution");
+            Console.WriteLine("End Sudoku using combinatorial evolution");
+
+            return Convert.ToString(solvedSudoku);
+        }
+
+```
+
+#### Distribution dans Spark et parrallélisation dans un cluster
+
+Afin de pouvoir distribué dans Spark, nous avons créé la static void "runSpark".
+Dans un premier temps, on crée une session Spark où grâce au ".Config("spark.executor.cores", cores)" on peut choisir le nombre de noyaux du cluster, et ".Config("spark.executor.instances", nodes)" qui nous permet de choisir le nombre de noeuds.
+Ensuite, on lit le fichier csv dans un DataFrame, que l'on va ensuite implémenter dans une fonction Spark Udf (User Defined Function) qui appelle la fonction vu juste avant "sudokusolution".
+
+```c#
+
+static void runSpark(string file_path, string cores, string nodes, int nrows)
+        {
+
+            // Create Spark session 
+            SparkSession spark =
+                SparkSession
+                    .Builder()
+                    .AppName("Resolution de " + nrows + " sudokus par évolution combinatoire de " + cores + " noyau(x) et " + nodes + " noeud(s)")
+                    .Config("spark.executor.cores", cores)
+                    .Config("spark.executor.instances", nodes)
+                    .GetOrCreate();
+
+            // Create initial DataFrame
+            DataFrame dataFrame = spark
+                .Read()
+                .Option("header", true)
+                .Option("inferSchema", true)
+                .Schema("quizzes string, solutions string")
+                .Csv(file_path);
+
+            DataFrame dataFrame2 = dataFrame.Limit(nrows);
+
+            spark.Udf().Register<string, string>(
+                "SukoduUDF",
+                (sudoku) => sudokusolution(sudoku));
+
+            dataFrame2.CreateOrReplaceTempView("Resolved");
+            DataFrame sqlDf = spark.Sql("SELECT quizzes, SukoduUDF(quizzes) as Resolution from Resolved");
+            sqlDf.Show();
+
+            spark.Stop();
+
+        }
+
+```
+
+Enfin dans le static void Main, nous cherchons d'abord le fichier csv. Puis nous utilisons la fonction "System.Diagnostics.Stopwatch()" afin de pouvoir avoir une idée du temps d'exécution de notre solution. Nous définissons le nombre de noyaux et de noeuds que nous souhaitons dans notre cluster puis nous appelons "runSpark" en lui donnant les paramètres dont elle a bseoin à savoir le fichier à lire, le nombre de noyaux, le nombre de noeuds et le nombre de sudokus que nous souhaitons résoudre.
+
+```c#
+
+static void Main(string[] args)
+        {
+            
+            string filepath = "/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/sudoku.csv";
+
+            var temps1 = new System.Diagnostics.Stopwatch();
+
+            var noyau = "1";
+            var noeud = "2";
+            var nbsudokus = 10;
+
+            temps1.Start();
+            runSpark(filepath, noyau, noeud, nbsudokus);
+            temps1.Stop();
+
+            Console.WriteLine($"Temps d'exécution pour " + noyau + " noyau et " + noeud + " noeud: " + temps1.ElapsedMilliseconds + " ms");
+
+        }
+
+```
+
+### Commande d'exécution de la solution avec Spark-submit
+
+Vous trouverez ci-dessous ainsi que en fichier .txt, les commandes à lancer dans le terminal pour les utilisateurs MacOS et dans l'invite de commande pour les utilisateurs Windows.
+Il faut cependant modifier les chemins des différents objets au préalable.
+
+MacOS :
+
+```
+
+export SPARK_HOME=/Users/sarahvasquez/Downloads/spark-2.4.1-bin-hadoop2.7 
+
+export PATH="$SPARK_HOME/bin:$PATH"
+
+export DOTNET_WORKER_DIR=/Users/sarahvasquez/Downloads/Microsoft.Spark.Worker-1.0.0 
+
+cd /Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver
+
+dotnet add package Microsoft.Spark
+
+dotnet build
+
+export DOTNET_ASSEMBLY_SEARCH_PATHS=/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1
+
+spark-submit \
+--class org.apache.spark.deploy.dotnet.DotnetRunner \
+--master local \
+/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1/microsoft-spark-2-4_2.11-1.0.0.jar  \
+dotnet /Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1/SudokuCombinatorialEvolutionSolver.dll
+
+```
+
+Windows :
+
+```
+
+setx /M HADOOP_HOME C:\bin\spark-3.0.1-bin-hadoop2.7\
+setx /M SPARK_HOME C:\bin\spark-3.0.1-bin-hadoop2.7\
+setx /M PATH "%PATH%;%HADOOP_HOME%;%SPARK_HOME%\bin" 
+
+setx /M DOTNET_WORKER_DIR <PATH-DOTNET-WORKER-DIR>
+
+dotnet add package Microsoft.Spark
+
+dotnet build
+
+spark-submit --class org.apache.spark.deploy.dotnet.DotnetRunner --master local C:\Users\vadaz\Downloads\wetransfer-bb1239\SudokuCombinatorialEvolutionSolver\bin\Debug\netcoreapp3.1\microsoft-spark-2-4_2.11-1.0.0.jar dotnet C:\Users\vadaz\Downloads\wetransfer-bb1239\SudokuCombinatorialEvolutionSolver\bin\Debug\netcoreapp3.1\SudokuCombinatorialEvolutionSolver.dll
+
+```
 
