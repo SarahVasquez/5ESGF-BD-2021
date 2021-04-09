@@ -1,0 +1,11 @@
+setx /M HADOOP_HOME C:\bin\spark-3.0.1-bin-hadoop2.7\
+setx /M SPARK_HOME C:\bin\spark-3.0.1-bin-hadoop2.7\
+setx /M PATH "%PATH%;%HADOOP_HOME%;%SPARK_HOME%\bin" 
+
+spark-submit --version
+
+setx /M DOTNET_WORKER_DIR <PATH-DOTNET-WORKER-DIR>
+
+dotnet build
+
+spark-submit --class org.apache.spark.deploy.dotnet.DotnetRunner --master local C:\Users\vadaz\Downloads\wetransfer-bb1239\SudokuCombinatorialEvolutionSolver\bin\Debug\netcoreapp3.1\microsoft-spark-2-4_2.11-1.0.0.jar dotnet C:\Users\vadaz\Downloads\wetransfer-bb1239\SudokuCombinatorialEvolutionSolver\bin\Debug\netcoreapp3.1\SudokuCombinatorialEvolutionSolver.dll

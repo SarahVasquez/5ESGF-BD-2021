@@ -1,0 +1,17 @@
+export SPARK_HOME=/Users/sarahvasquez/Downloads/spark-3.1.1-bin-hadoop2.7
+
+export PATH="$SPARK_HOME/bin:$PATH"
+
+export DOTNET_WORKER_DIR=/Users/sarahvasquez/Downloads/Microsoft.Spark.Worker-1.0.0 
+
+cd /Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver
+
+dotnet add package Microsoft.Spark
+
+dotnet build
+
+export DOTNET_ASSEMBLY_SEARCH_PATHS=/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/bin/Debug/netcoreapp3.1
+
+SPARK_LOCAL_IP="/Users/sarahvasquez/Downloads/spark-2.4.1-bin-hadoop2.7"
+
+90
