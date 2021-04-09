@@ -16,16 +16,17 @@ namespace SudokuCombinatorialEvolutionSolver
 
         static void Main(string[] args)
         {
-            
+
             string filepath = "/Users/sarahvasquez/Desktop/Sudoku/SudokuCombinatorialEvolutionSolver/sudoku.csv";
 
             var temps1 = new System.Diagnostics.Stopwatch();
 
             var noyau = "1";
-            var noeud = "1";
+            var noeud = "2";
+            var nbsudokus = 10;
 
             temps1.Start();
-            runSpark(filepath, noyau, noeud, 10);
+            runSpark(filepath, noyau, noeud, nbsudokus);
             temps1.Stop();
 
             Console.WriteLine($"Temps d'exécution pour " + noyau + " noyau et " + noeud + " noeud: " + temps1.ElapsedMilliseconds + " ms");
@@ -64,20 +65,18 @@ namespace SudokuCombinatorialEvolutionSolver
             sqlDf.Show();
 
             spark.Stop();
-            Console.WriteLine("\n\n\n\n\n\n");
-            Console.WriteLine("Test");
-            Console.WriteLine("\n\n\n\n\n\n");
+
         }
 
         static string sudokusolution(string grid)
         {
-            
+
 
             int[,] sudoku = new int[9, 9];
-            
+
             for (int i = 0; i < 9; i++)
             {
-                    
+
                 for (int index = 0; index < 9; index++)
                 {
                     sudoku[i, index] = Convert.ToInt32(grid[index]);
@@ -107,7 +106,7 @@ namespace SudokuCombinatorialEvolutionSolver
             return Convert.ToString(solvedSudoku);
         }
 
-        
+
 
 
 

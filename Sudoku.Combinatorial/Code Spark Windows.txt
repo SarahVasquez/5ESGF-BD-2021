@@ -2,9 +2,9 @@ setx /M HADOOP_HOME C:\bin\spark-3.0.1-bin-hadoop2.7\
 setx /M SPARK_HOME C:\bin\spark-3.0.1-bin-hadoop2.7\
 setx /M PATH "%PATH%;%HADOOP_HOME%;%SPARK_HOME%\bin" 
 
-spark-submit --version
-
 setx /M DOTNET_WORKER_DIR <PATH-DOTNET-WORKER-DIR>
+
+dotnet add package Microsoft.Spark
 
 dotnet build
 
